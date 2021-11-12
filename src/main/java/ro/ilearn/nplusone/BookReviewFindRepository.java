@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface BookReviewFindRepository {
 
-    List<BookReview> findAllFetchTypeEager();
+    List<BookReview> findAll();
 
-    List<BookReview> findAllFetchTypeLazy();
+    List<BookReview> findAllJoinFetch();
 }

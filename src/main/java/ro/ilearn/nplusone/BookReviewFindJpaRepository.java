@@ -16,13 +16,13 @@ public class BookReviewFindJpaRepository implements BookReviewFindRepository {
     }
 
     @Override
-    public List<BookReview> findAllFetchTypeEager() {
+    public List<BookReview> findAll() {
         TypedQuery<BookReview> typedQuery = em.createQuery("SELECT br FROM BookReview br", BookReview.class);
         return typedQuery.getResultList();
     }
 
     @Override
-    public List<BookReview> findAllFetchTypeLazy() {
+    public List<BookReview> findAllJoinFetch() {
         TypedQuery<BookReview> typedQuery = em.createQuery("SELECT br FROM BookReview br join fetch br.book b", BookReview.class);
         return typedQuery.getResultList();
     }

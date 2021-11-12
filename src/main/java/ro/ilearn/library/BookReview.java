@@ -10,8 +10,7 @@ public class BookReview {
     private String review;
     @Column(name = "written_by")
     private String writtenBy;
-    //@ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book_id")
     private Book book;
 
@@ -45,6 +44,16 @@ public class BookReview {
 
     public void setBook(Book book) {
         this.book = book;
+    }
+
+    @Override
+    public String toString() {
+        return "BookReview{" +
+                "id=" + id +
+                ", review='" + review + '\'' +
+                ", writtenBy='" + writtenBy + '\'' +
+                ", book=" + book +
+                '}';
     }
 
     @Override
