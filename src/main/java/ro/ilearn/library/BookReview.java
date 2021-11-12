@@ -10,7 +10,8 @@ public class BookReview {
     private String review;
     @Column(name = "written_by")
     private String writtenBy;
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
 
