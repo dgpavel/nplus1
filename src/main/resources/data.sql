@@ -2,6 +2,7 @@
 insert into book(id,title) values(1,'Effective Java');
 insert into book(id,title) values(2,'Head First Java');
 insert into book(id,title) values(3,'Head First Design Patterns');
+insert into book(id,title) values(4,'Java for Students');
 -- book_review
 insert into book_review(id,book_id,review,written_by) values(1,1,'I got this book 2 weeks ago, and it more than fulfilled my expectations. It is packed with best practices and detailed descriptions of the finer details of the Java language. Every developer should at least read the chapters about generics and lambdas.','Thorben Janssen');
 insert into book_review(id,book_id,review,written_by) values(2,1,'This is the single best book I have seen or read about Java to date. Bloch, who has been involved in the development of the latest versions of the Java language and specification, does not teach how to write Java code; he teaches how to write GOOD Java code.','Eric');

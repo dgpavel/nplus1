@@ -1,13 +1,23 @@
 package ro.ilearn.library;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Book {
     @Id
     private Long id;
     private String title;
+    @OneToMany(
+            mappedBy = "book",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private Set<BookReview> reviews = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -23,6 +33,16 @@ public class Book {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void addReview(BookReview review) {
+        reviews.add(review);
+        review.setBook(this);
+    }
+
+    public void removeReview(BookReview review) {
+        reviews.remove(review);
+        review.setBook(null);
     }
 
     @Override
