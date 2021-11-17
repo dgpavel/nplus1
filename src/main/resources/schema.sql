@@ -2,6 +2,7 @@ create table book
 (
    id bigint not null,
    title varchar(255) not null,
+   edition int not null,
    primary key(id)
 );
 

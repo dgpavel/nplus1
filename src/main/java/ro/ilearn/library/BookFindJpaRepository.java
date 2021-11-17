@@ -41,9 +41,10 @@ public class BookFindJpaRepository implements BookFindRepository {
                 bookReviewJoin.get(BookReview_.review).alias(BookReview_.REVIEW),
                 bookReviewJoin.get(BookReview_.writtenBy).alias(BookReview_.WRITTEN_BY),
                 bookRoot.get(Book_.id).alias(ID_BOOK),
-                bookRoot.get(Book_.title).alias(Book_.TITLE)
+                bookRoot.get(Book_.title).alias(Book_.TITLE),
+                bookRoot.get(Book_.edition).alias(Book_.EDITION)
         );
-        // WHERE
+        // WHERE - hmm daca vreau si ordonare ajung tot la 2 selecturi
         cq.where(buildWhere(searchDto, cb, bookRoot, bookReviewJoin));
         // Order By ID Parinte
         cq.orderBy(cb.asc(bookRoot.get(Book_.id)));
@@ -90,7 +91,8 @@ public class BookFindJpaRepository implements BookFindRepository {
                     bookReviewJoin.get(BookReview_.review).alias(BookReview_.REVIEW),
                     bookReviewJoin.get(BookReview_.writtenBy).alias(BookReview_.WRITTEN_BY),
                     bookRoot.get(Book_.id).alias(ID_BOOK),
-                    bookRoot.get(Book_.title).alias(Book_.TITLE)
+                    bookRoot.get(Book_.title).alias(Book_.TITLE),
+                    bookRoot.get(Book_.edition).alias(Book_.EDITION)
             );
             // WHERE ids parinti din primul select
             cq.where(bookRoot.get(Book_.id).in(idsParent));
@@ -168,6 +170,7 @@ public class BookFindJpaRepository implements BookFindRepository {
                     parent = BookDto.builder()
                             .id(tuple.get(ID_BOOK, Long.class))
                             .title(tuple.get(Book_.TITLE, String.class))
+                            .edition(tuple.get(Book_.EDITION,Integer.class))
                             .build();
                     // adaug parinte curent lista parinti de returnat
                     parents.add(parent);

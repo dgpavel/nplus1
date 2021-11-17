@@ -12,6 +12,8 @@ public class Book {
     @Id
     private Long id;
     private String title;
+    private Integer edition;
+
     @OneToMany(
             mappedBy = "book",
             cascade = CascadeType.ALL,
@@ -35,6 +37,22 @@ public class Book {
         this.title = title;
     }
 
+    public Integer getEdition() {
+        return edition;
+    }
+
+    public void setEdition(Integer edition) {
+        this.edition = edition;
+    }
+
+    public Set<BookReview> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(Set<BookReview> reviews) {
+        this.reviews = reviews;
+    }
+
     public void addReview(BookReview review) {
         reviews.add(review);
         review.setBook(this);
@@ -50,6 +68,7 @@ public class Book {
         return "Book{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", edition=" + edition +
                 '}';
     }
 

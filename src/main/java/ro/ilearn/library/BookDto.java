@@ -11,6 +11,7 @@ import java.util.List;
 public class BookDto {
     private Long id;
     private String title;
+    private Integer edition;
     private List<BookReviewDto> bookReviews;
 
     public void addBookReview(BookReviewDto bookReviewDto) {

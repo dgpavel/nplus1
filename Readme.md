@@ -16,3 +16,5 @@ Se cere:
 Conform bunelor practici vom intoarce informatiile incapsulate in clase "Dto".
 
 Atentie la cazul cand o carte nu are nici un review.
+
+Pentru a evita erorile "typos" am utilizat "hibernate-jpamodelgen" in interogarile cu "Criteria"

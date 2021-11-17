@@ -30,7 +30,7 @@ class BookFindJpaRepositoryTest {
         TypedQuery<Book> typedQuery = em.createQuery("SELECT b FROM Book b order by b.title", Book.class);
         List<Book> books = typedQuery.getResultList();
         // then
-        assertEquals(4, books.size());
+        assertEquals(6, books.size());
     }
 
     @Test
@@ -38,23 +38,23 @@ class BookFindJpaRepositoryTest {
         TypedQuery<Book> typedQuery = em.createQuery("SELECT b FROM Book b join fetch b.reviews br order by b.title", Book.class);
         List<Book> books = typedQuery.getResultList();
         // then
-        assertEquals(4, books.size());
+        assertEquals(6, books.size());
     }
 
     @Test
-    void hql_fetch_distinct_then_Return() {
+    void hql_distinct_fetch_then_Return() {
         TypedQuery<Book> typedQuery = em.createQuery("SELECT DISTINCT b FROM Book b join fetch b.reviews br order by b.title", Book.class);
         List<Book> books = typedQuery.getResultList();
         // then
-        assertEquals(4, books.size());
+        assertEquals(6, books.size());
     }
 
     @Test
-    void hql_left_then_Return() {
+    void hql_distinct_left_fetch_then_Return() {
         TypedQuery<Book> typedQuery = em.createQuery("SELECT DISTINCT b FROM Book b left join fetch b.reviews br order by b.title", Book.class);
         List<Book> books = typedQuery.getResultList();
         // then
-        assertEquals(4, books.size());
+        assertEquals(6, books.size());
     }
 
 
@@ -78,7 +78,7 @@ class BookFindJpaRepositoryTest {
         // when
         List<BookDto> books = bookFindRepository.search(searchDto, 0, 0);
         // then
-        assertEquals(4, books.size());
+        assertEquals(6, books.size());
     }
 
     @Test
