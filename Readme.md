@@ -9,9 +9,10 @@ In JPA modelam aceasta prin doua clase Book si respectiv BookReview. M-am inspir
 
 Se cere:
 
-- lista tuturor cartilor ordonate. Fiecare carte va avea toate recenziile.
-- lista cartilor paginat ordonate. Fiecare carte va avea toate recenziile.
+- lista tuturor cartilor. Fiecare carte va avea toate recenziile.
+- lista tuturor cartilor paginat. Fiecare carte va avea toate recenziile.
+- Regula: orice lista trebuie ordonata; Daca nu imi vine ca parametru ordonare programatorul face una implicita. 
 
 Conform bunelor practici vom intoarce informatiile incapsulate in clase "Dto".
 
-Atentie la cazul cand o care nu are nici un review.
+Atentie la cazul cand o carte nu are nici un review.

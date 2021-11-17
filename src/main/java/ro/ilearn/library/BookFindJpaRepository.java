@@ -12,8 +12,8 @@ import java.util.*;
 
 @Repository
 public class BookFindJpaRepository implements BookFindRepository {
-    private final EntityManager em;
     public static final String ID_BOOK = "idBook";
+    private final EntityManager em;
 
     public BookFindJpaRepository(EntityManager em) {
         this.em = em;
@@ -22,6 +22,7 @@ public class BookFindJpaRepository implements BookFindRepository {
     /**
      * N + 1 nepaginat un singur select
      *
+     * @param searchDto     forma de cautare
      * @param sortColumn    0 = title
      * @param sortDirection 0 = asc, 1 = desc
      * @return toata lista de carti cu recenzii
@@ -68,15 +69,15 @@ public class BookFindJpaRepository implements BookFindRepository {
     @Override
     public List<BookDto> search(BookSearchDto searchDto, int sortColumn, int sortDirection, Pageable pageable) {
         // Primul select IDs de parinti
-        List<Long> ids = firstSelect(searchDto, sortColumn, sortDirection, pageable);
+        List<Long> idsParent = firstSelect(searchDto, sortColumn, sortDirection, pageable);
         // Al doilea select
-        return secondSelect(ids, sortColumn, sortDirection);
+        return secondSelect(idsParent, sortColumn, sortDirection);
     }
 
-    private List<BookDto> secondSelect(List<Long> ids, int sortColumn, int sortDirection) {
+    private List<BookDto> secondSelect(List<Long> idsParent, int sortColumn, int sortDirection) {
         // lista parinti de returnat
         List<BookDto> dtoLst = new ArrayList<>();
-        if (!ids.isEmpty()) {
+        if (!idsParent.isEmpty()) {
             //
             CriteriaBuilder cb = em.getCriteriaBuilder();
             CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
@@ -92,16 +93,15 @@ public class BookFindJpaRepository implements BookFindRepository {
                     bookRoot.get(Book_.title).alias(Book_.TITLE)
             );
             // WHERE ids parinti din primul select
-            cq.where(bookRoot.get(Book_.id).in(ids));
+            cq.where(bookRoot.get(Book_.id).in(idsParent));
             // Order By ID Parinte
             cq.orderBy(cb.asc(bookRoot.get(Book_.id)));
             // Execute query
             List<Tuple> tupleLst = em.createQuery(cq).getResultList();
             //
-            List<BookDto> list = fromTupleToDto(tupleLst);
+            dtoLst.addAll(fromTupleToDto(tupleLst));
             // Order BY
-            orderBy(list, sortColumn, sortDirection);
-            return list;
+            orderBy(dtoLst, sortColumn, sortDirection);
         }
         return dtoLst;
     }
@@ -123,14 +123,15 @@ public class BookFindJpaRepository implements BookFindRepository {
                 .setFirstResult((int) pageable.getOffset())
                 .setMaxResults(pageable.getPageSize());
         List<Tuple> tupleLst = query.getResultList();
-        List<Long> ids = new ArrayList<>();
+        // transform from tuple
+        List<Long> idsParent = new ArrayList<>();
         if (!tupleLst.isEmpty()) {
             for (Tuple tuple : tupleLst) {
                 Long id = (Long) tuple.get(0);
-                ids.add(id);
+                idsParent.add(id);
             }
         }
-        return ids;
+        return idsParent;
     }
 
     private Predicate[] buildWhere(BookSearchDto searchDto, CriteriaBuilder cb, Root<Book> bookRoot, Join<Book, BookReview> bookReviewJoin) {
@@ -148,47 +149,47 @@ public class BookFindJpaRepository implements BookFindRepository {
 
     private List<BookDto> fromTupleToDto(List<Tuple> tupleLst) {
         // multime id-uri de parinti distincte
-        Set<Long> idLst = new HashSet<>();
-        // dto parinte curent
-        BookDto bookDto = BookDto.builder().build();
+        Set<Long> idsParent = new HashSet<>();
+        // parinte curent
+        BookDto parent = BookDto.builder().build();
         // lista parinti de returnat
-        List<BookDto> dtoLst = new ArrayList<>();
+        List<BookDto> parents = new ArrayList<>();
         if (!tupleLst.isEmpty()) {
             for (Tuple tuple : tupleLst) {
                 // id parinte
-                Long idBook = tuple.get(ID_BOOK, Long.class);
-                // am deja parintele ... adaug copilul
-                if (idLst.contains(idBook)) {
-                    addCopilLaParinte(tuple, bookDto);
-                } else { // am parinte nou
-                    // adaug id parinte curent la multime id-uri parinte
-                    idLst.add(idBook);
-                    // creez dto parinte curent
-                    bookDto = BookDto.builder()
+                Long idParent = tuple.get(ID_BOOK, Long.class);
+                if (idsParent.contains(idParent)) {
+                    // am deja parintele ... adaug copilul la parintele curent
+                    addCopilLaParinte(tuple, parent);
+                } else {
+                    // am parinte nou; adaug id parinte curent la multime id-uri parinte
+                    idsParent.add(idParent);
+                    // creez parinte curent
+                    parent = BookDto.builder()
                             .id(tuple.get(ID_BOOK, Long.class))
                             .title(tuple.get(Book_.TITLE, String.class))
                             .build();
-                    // adaug dto parinte curent la lista de returnat
-                    dtoLst.add(bookDto);
-                    // daca are copil
+                    // adaug parinte curent lista parinti de returnat
+                    parents.add(parent);
+                    // daca are copil i-l adaug la parinte
                     if (tuple.get(BookReview_.ID, Long.class) != null) {
-                        addCopilLaParinte(tuple, bookDto);
+                        addCopilLaParinte(tuple, parent);
                     }
                 }
             }
         }
-        return dtoLst;
+        return parents;
     }
 
-    private void addCopilLaParinte(Tuple tuple, BookDto bookDto) {
-        // creez dto copil curent
-        BookReviewDto bookReviewDto = BookReviewDto.builder()
+    private void addCopilLaParinte(Tuple tuple, BookDto parinte) {
+        // creez copil curent
+        BookReviewDto copil = BookReviewDto.builder()
                 .id(tuple.get(BookReview_.ID, Long.class))
                 .writtenBy(tuple.get(BookReview_.WRITTEN_BY, String.class))
                 .review(tuple.get(BookReview_.REVIEW, String.class))
                 .build();
-        // adaug la dto parinte curent
-        bookDto.addBookReview(bookReviewDto);
+        // adaug copil la parinte curent
+        parinte.addBookReview(copil);
     }
 
     private Order buildOrderBy(Integer sortColumn, Integer sortDirection, CriteriaBuilder cb, Root<Book> bookRoot) {
