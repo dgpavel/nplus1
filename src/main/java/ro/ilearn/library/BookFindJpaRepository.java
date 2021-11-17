@@ -44,7 +44,7 @@ public class BookFindJpaRepository implements BookFindRepository {
                 bookRoot.get(Book_.title).alias(Book_.TITLE),
                 bookRoot.get(Book_.edition).alias(Book_.EDITION)
         );
-        // WHERE - hmm daca vreau si ordonare ajung tot la 2 selecturi
+        // WHERE
         cq.where(buildWhere(searchDto, cb, bookRoot, bookReviewJoin));
         // Order By ID Parinte
         cq.orderBy(cb.asc(bookRoot.get(Book_.id)));
