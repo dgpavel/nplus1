@@ -27,7 +27,7 @@ class BookFindJpaRepositoryTest {
 
     @Test
     void hql_then_Return() {
-        TypedQuery<Book> typedQuery = em.createQuery("SELECT b FROM Book b", Book.class);
+        TypedQuery<Book> typedQuery = em.createQuery("SELECT b FROM Book b order by b.title", Book.class);
         List<Book> books = typedQuery.getResultList();
         // then
         assertEquals(4, books.size());
@@ -35,15 +35,23 @@ class BookFindJpaRepositoryTest {
 
     @Test
     void hql_fetch_then_Return() {
-        TypedQuery<Book> typedQuery = em.createQuery("SELECT DISTINCT b FROM Book b join fetch b.reviews br", Book.class);
+        TypedQuery<Book> typedQuery = em.createQuery("SELECT b FROM Book b join fetch b.reviews br order by b.title", Book.class);
         List<Book> books = typedQuery.getResultList();
         // then
-        assertEquals(3, books.size());
+        assertEquals(4, books.size());
+    }
+
+    @Test
+    void hql_fetch_distinct_then_Return() {
+        TypedQuery<Book> typedQuery = em.createQuery("SELECT DISTINCT b FROM Book b join fetch b.reviews br order by b.title", Book.class);
+        List<Book> books = typedQuery.getResultList();
+        // then
+        assertEquals(4, books.size());
     }
 
     @Test
     void hql_left_then_Return() {
-        TypedQuery<Book> typedQuery = em.createQuery("SELECT DISTINCT b FROM Book b left join fetch b.reviews br", Book.class);
+        TypedQuery<Book> typedQuery = em.createQuery("SELECT DISTINCT b FROM Book b left join fetch b.reviews br order by b.title", Book.class);
         List<Book> books = typedQuery.getResultList();
         // then
         assertEquals(4, books.size());
@@ -55,7 +63,7 @@ class BookFindJpaRepositoryTest {
         // given
         Pageable pageable = PageRequest.of(1, 2);
         // when
-        TypedQuery<Book> typedQuery = em.createQuery("SELECT DISTINCT  b FROM Book b left join fetch b.reviews br", Book.class)
+        TypedQuery<Book> typedQuery = em.createQuery("SELECT DISTINCT  b FROM Book b left join fetch b.reviews br order by b.title", Book.class)
                 .setFirstResult((int) pageable.getOffset())
                 .setMaxResults(pageable.getPageSize());
         List<Book> books = typedQuery.getResultList();
