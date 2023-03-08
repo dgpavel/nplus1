@@ -1,4 +1,4 @@
-## Tratarea problemei N + 1 in JPA
+## Tratarea problemei N + 1 cu si fara paginare in interogarile SQL. (implementare JPA)
 
 Suntem in contextul unei librarii online. O carte poate avea zero sau mai multe recenzii scrise de catre cititori. O
 recenzie este pentru o singura carte.
